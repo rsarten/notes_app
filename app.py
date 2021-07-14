@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, render_template, request, url_for, redirect, flash
 from werkzeug.exceptions import abort
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 def get_db_connection():
     conn = sqlite3.connect("data/database.db")
@@ -8,6 +9,7 @@ def get_db_connection():
     return conn
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 app.config["SECRET_KEY"] = "this is the only secret left"
 
 @app.route("/")
